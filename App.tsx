@@ -1,21 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import tailwind from 'tailwind-rn';
+import SearchIcon from './assets/search.svg';
 
-export default function App() {
+const App: React.FC = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={tailwind('flex-1 justify-center items-center')}>
+      <View>
+        <Text style={tailwind('bg-red-400')}>test</Text>
+        <SearchIcon />
+      </View>
+
+      <StatusBar />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
