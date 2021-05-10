@@ -23,6 +23,7 @@ const App: React.FC = () => {
       'Poppins-Regular': require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
       'Poppins-SemiBold': require('./assets/fonts/Poppins/Poppins-SemiBold.ttf'),
       'Poppins-Bold': require('./assets/fonts/Poppins/Poppins-Bold.ttf'),
+      'SFCompactText-Regular': require('./assets/fonts/SFCompactText/SFCompactText-Regular.ttf'),
     });
     setFontsLoaded(true);
   };
