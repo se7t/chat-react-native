@@ -1,9 +1,13 @@
+/* eslint-disable global-require */
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import * as Font from 'expo-font';
 import RoomsScreen from './screens/RoomsScreen';
 import ChatScreen from './screens/ChatScreen';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { tailwind } from './lib/tailwind';
 
 type RootStackParamList = {
   Rooms: undefined;
@@ -13,7 +17,22 @@ type RootStackParamList = {
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const App: React.FC = () => {
-  return (
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const loadFonts = async () => {
+    await Font.loadAsync({
+      'Poppins-Medium': require('./assets/fonts/Poppins/Poppins-Medium.ttf'),
+      'Poppins-Regular': require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
+      'Poppins-SemiBold': require('./assets/fonts/Poppins/Poppins-SemiBold.ttf'),
+    });
+    setFontsLoaded(true);
+  };
+
+  useEffect(() => {
+    loadFonts();
+  }, []);
+
+  return fontsLoaded ? (
     <NavigationContainer>
       <StatusBar />
       <RootStack.Navigator initialRouteName="Rooms">
@@ -21,6 +40,8 @@ const App: React.FC = () => {
         <RootStack.Screen name="Chat" component={ChatScreen} />
       </RootStack.Navigator>
     </NavigationContainer>
+  ) : (
+    <></>
   );
 };
 
