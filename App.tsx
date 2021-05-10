@@ -1,19 +1,26 @@
+import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Text, View } from 'react-native';
-import tailwind from 'tailwind-rn';
-import SearchIcon from './assets/search.svg';
+import { createStackNavigator } from '@react-navigation/stack';
+import RoomsScreen from './screens/RoomsScreen';
+import ChatScreen from './screens/ChatScreen';
+
+type RootStackParamList = {
+  Rooms: undefined;
+  Chat: undefined;
+};
+
+const RootStack = createStackNavigator<RootStackParamList>();
 
 const App: React.FC = () => {
   return (
-    <View style={tailwind('flex-1 justify-center items-center')}>
-      <View>
-        <Text style={tailwind('bg-red-400')}>test</Text>
-        <SearchIcon />
-      </View>
-
+    <NavigationContainer>
       <StatusBar />
-    </View>
+      <RootStack.Navigator initialRouteName="Rooms">
+        <RootStack.Screen name="Rooms" component={RoomsScreen} />
+        <RootStack.Screen name="Chat" component={ChatScreen} />
+      </RootStack.Navigator>
+    </NavigationContainer>
   );
 };
 
