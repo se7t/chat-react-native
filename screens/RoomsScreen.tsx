@@ -44,7 +44,7 @@ const RoomsScreen: React.FC = ({ navigation }) => {
       navigation.setOptions({
         headerStyle: tailwind('bg-blue-tint-1 rounded-3xl h-28'),
         headerTitleStyle: [
-          tailwind('text-3xl text-plum-normal mt-4'),
+          tailwind('text-2xl text-plum-normal mt-2'),
           { fontFamily: 'Poppins-Bold' },
         ],
         headerRight: () => (
@@ -71,6 +71,7 @@ const RoomsScreen: React.FC = ({ navigation }) => {
               ? tailwind('bg-white')
               : tailwind('bg-plum-normal'),
           ]}
+          onTouchEnd={() => navigation.navigate('Chat')}
         >
           <Image source={require('../assets/room-1.png')} />
           <View style={tailwind('flex justify-center ml-4')}>
@@ -97,7 +98,6 @@ const RoomsScreen: React.FC = ({ navigation }) => {
               {room.lastMessage.message.length > 35
                 ? `${room.lastMessage.message.substring(0, 35)}...`
                 : room.lastMessage.message}
-              {room.lastMessage.message}
             </Text>
           </View>
           <Text
