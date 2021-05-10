@@ -9,13 +9,13 @@ const RoomsScreen: React.FC = ({ navigation }) => {
   useEffect(
     () =>
       navigation.setOptions({
-        headerStyle: tailwind('bg-blue-tint-1 rounded-3xl h-32'),
+        headerStyle: tailwind('bg-blue-tint-1 rounded-3xl h-28'),
         headerTitleStyle: [
-          tailwind('text-3xl text-plum-normal mt-6'),
+          tailwind('text-3xl text-plum-normal mt-4'),
           { fontFamily: 'Poppins-Bold' },
         ],
         headerRight: () => (
-          <View style={tailwind('flex flex-row mt-8')}>
+          <View style={tailwind('flex flex-row mt-4')}>
             <SearchIcon />
             <RoomsIcon style={tailwind('ml-2 mr-4')} />
           </View>
