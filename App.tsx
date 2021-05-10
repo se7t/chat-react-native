@@ -6,8 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
 import RoomsScreen from './screens/RoomsScreen';
 import ChatScreen from './screens/ChatScreen';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { tailwind } from './lib/tailwind';
 
 type RootStackParamList = {
   Rooms: undefined;
@@ -24,6 +22,7 @@ const App: React.FC = () => {
       'Poppins-Medium': require('./assets/fonts/Poppins/Poppins-Medium.ttf'),
       'Poppins-Regular': require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
       'Poppins-SemiBold': require('./assets/fonts/Poppins/Poppins-SemiBold.ttf'),
+      'Poppins-Bold': require('./assets/fonts/Poppins/Poppins-Bold.ttf'),
     });
     setFontsLoaded(true);
   };
