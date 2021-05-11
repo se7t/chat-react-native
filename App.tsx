@@ -6,11 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
 import RoomsScreen from './screens/RoomsScreen';
 import ChatScreen from './screens/ChatScreen';
-
-type RootStackParamList = {
-  Rooms: undefined;
-  Chat: undefined;
-};
+import { RootStackParamList } from './navigation';
 
 const RootStack = createStackNavigator<RootStackParamList>();
 

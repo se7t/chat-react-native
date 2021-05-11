@@ -4,9 +4,13 @@ import { Button, Image, View, Text } from 'react-native';
 import { tailwind } from '../lib/tailwind';
 import PhoneIcon from '../assets/phone.svg';
 import VideoCallIcon from '../assets/videocall.svg';
+import { ChatScreenNavigationProp } from '../navigation';
 
-// TODO: Add type checking to navigation
-const ChatScreen: React.FC = ({ navigation }) => {
+type NavigationProps = {
+  navigation: ChatScreenNavigationProp;
+};
+
+const ChatScreen: React.FC<NavigationProps> = ({ navigation }) => {
   useEffect(
     () =>
       navigation.setOptions({

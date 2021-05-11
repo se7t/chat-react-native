@@ -4,9 +4,13 @@ import { Image, View, Text } from 'react-native';
 import { tailwind } from '../lib/tailwind';
 import SearchIcon from '../assets/search.svg';
 import RoomsIcon from '../assets/rooms.svg';
+import { RoomsScreenNavigationProp } from '../navigation';
 
-// TODO: Add type checking to navigation
-const RoomsScreen: React.FC = ({ navigation }) => {
+type NavigationProps = {
+  navigation: RoomsScreenNavigationProp;
+};
+
+const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
   // TODO: Change to context
   const [rooms, setRooms] = useState([
     {
