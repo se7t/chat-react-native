@@ -39,7 +39,6 @@ const TWG_USERS_ROOMS = gql`
 
 const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
   const { loading, error, data } = useQuery<RoomsData>(TWG_USERS_ROOMS);
-  console.log(loading, error, data);
 
   const temporaryMessage =
     'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque in nemo omnis eius aperiam cum id qui ratione quam accusamus debitis sunt architecto vero doloremque, tempore labore dignissimos dolor commodi voluptatem doloribus! Quaerat aperiam laboriosam eius! Ea dolorum perspiciatis totam laborum consequatur doloremque neque ex alias? Laboriosam dolorem harum adipisci!';
