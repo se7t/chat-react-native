@@ -14,7 +14,7 @@ const ChatScreen: React.FC<NavigationProps> = ({ navigation }) => {
   useEffect(
     () =>
       navigation.setOptions({
-        title: false,
+        title: '',
         headerStyle: tailwind('bg-blue-tint-1 rounded-3xl h-28'),
         headerLeft: () => (
           <View style={tailwind('flex flex-row mt-4 ml-4')}>
