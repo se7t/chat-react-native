@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
 import { Image, View, Text } from 'react-native';
+import { gql, useQuery } from '@apollo/client';
 import { tailwind } from '../lib/tailwind';
 import SearchIcon from '../assets/search.svg';
 import RoomsIcon from '../assets/rooms.svg';
@@ -10,7 +11,32 @@ type NavigationProps = {
   navigation: RoomsScreenNavigationProp;
 };
 
+interface RoomsData {
+  usersRooms: {
+    rooms: {
+      id: string;
+      name: string;
+      roomPic: string;
+    };
+  };
+}
+
+const TWG_USERS_ROOMS = gql`
+  query GetUsersRooms {
+    usersRooms {
+      rooms {
+        id
+        name
+        roomPic
+      }
+    }
+  }
+`;
+
 const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
+  const { loading, error, data } = useQuery<RoomsData>(TWG_USERS_ROOMS);
+  console.log(loading, error, data);
+
   // TODO: Change to context
   const [rooms, setRooms] = useState([
     {
@@ -62,7 +88,7 @@ const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
     [navigation],
   );
 
-  return (
+  return !loading && !error ? (
     <View style={tailwind('mt-4')}>
       {rooms.map((room, index) => (
         <View
@@ -114,6 +140,12 @@ const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
           </Text>
         </View>
       ))}
+    </View>
+  ) : (
+    <View style={tailwind('mt-4 self-center')}>
+      <Text style={tailwind('text-base')}>
+        {error ? 'Error loading rooms.' : 'Loading rooms...'}
+      </Text>
     </View>
   );
 };

@@ -4,9 +4,18 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import RoomsScreen from './screens/RoomsScreen';
 import ChatScreen from './screens/ChatScreen';
 import { RootStackParamList } from './navigation';
+
+const client = new ApolloClient({
+  uri: process.env.REACT_NATIVE_CHAT_URL,
+  headers: {
+    Authorization: `Bearer ${process.env.REACT_NATIVE_CHAT_AUTH_TOKEN}`,
+  },
+  cache: new InMemoryCache(),
+});
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -29,13 +38,15 @@ const App: React.FC = () => {
   }, []);
 
   return fontsLoaded ? (
-    <NavigationContainer>
-      <StatusBar />
-      <RootStack.Navigator initialRouteName="Rooms">
-        <RootStack.Screen name="Rooms" component={RoomsScreen} />
-        <RootStack.Screen name="Chat" component={ChatScreen} />
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        <StatusBar />
+        <RootStack.Navigator initialRouteName="Rooms">
+          <RootStack.Screen name="Rooms" component={RoomsScreen} />
+          <RootStack.Screen name="Chat" component={ChatScreen} />
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   ) : (
     <></>
   );
