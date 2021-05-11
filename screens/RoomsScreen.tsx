@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Image, View, Text } from 'react-native';
 import { gql, useQuery } from '@apollo/client';
 import { tailwind } from '../lib/tailwind';
@@ -17,6 +17,7 @@ interface RoomsData {
       id: string;
       name: string;
       roomPic: string;
+      map?: any;
     };
   };
 }
@@ -33,41 +34,17 @@ const TWG_USERS_ROOMS = gql`
   }
 `;
 
+// TODO: Add last message
+// TODO: Add dynamic time display
+
 const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
   const { loading, error, data } = useQuery<RoomsData>(TWG_USERS_ROOMS);
   console.log(loading, error, data);
 
-  // TODO: Change to context
-  const [rooms, setRooms] = useState([
-    {
-      image: '../assets/room-1.png',
-      name: 'The one with Harry',
-      lastMessage: {
-        message: 'Hey Harry, how are you doing?',
-        timeAgo: 'now',
-        read: false,
-      },
-    },
-    {
-      image: '../assets/sample-avatar.png',
-      name: 'The one with Ron',
-      lastMessage: {
-        message: 'Ron sent a photo.',
-        timeAgo: '24 m ago',
-        read: true,
-      },
-    },
-    {
-      image: '../assets/sample-avatar.png',
-      name: 'The one with Remus',
-      lastMessage: {
-        message:
-          'My parents tried everything, but insurprisingly it was all for nothing.',
-        timeAgo: '2 h ago',
-        read: true,
-      },
-    },
-  ]);
+  const temporaryMessage =
+    'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque in nemo omnis eius aperiam cum id qui ratione quam accusamus debitis sunt architecto vero doloremque, tempore labore dignissimos dolor commodi voluptatem doloribus! Quaerat aperiam laboriosam eius! Ea dolorum perspiciatis totam laborum consequatur doloremque neque ex alias? Laboriosam dolorem harum adipisci!';
+
+  const temporaryTime = '14 m ago';
 
   useEffect(
     () =>
@@ -88,58 +65,59 @@ const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
     [navigation],
   );
 
-  return !loading && !error ? (
+  return !loading && !error && data ? (
     <View style={tailwind('mt-4')}>
-      {rooms.map((room, index) => (
-        <View
-          // Index is appended in case of more rooms with the same name
-          // eslint-disable-next-line react/no-array-index-key
-          key={room.name.replace(/\s/g, '').toLowerCase() + index}
-          style={[
-            tailwind('flex flex-row p-4 rounded-xl my-2'),
-            room.lastMessage.read
-              ? tailwind('bg-white')
-              : tailwind('bg-plum-normal'),
-          ]}
-          onTouchEnd={() => navigation.navigate('Chat')}
-        >
-          <Image source={require('../assets/room-1.png')} />
-          <View style={tailwind('flex justify-center ml-4')}>
+      {data.usersRooms.rooms.map(
+        (room: Record<string, string>, index: number) => (
+          <View
+            // Index is appended in case of more rooms with the same name
+            // eslint-disable-next-line react/no-array-index-key
+            key={room.name.replace(/\s/g, '').toLowerCase() + index}
+            style={[tailwind('flex flex-row p-4 rounded-xl my-2')]}
+            onTouchEnd={() => navigation.navigate('Chat')}
+          >
+            <Image
+              source={
+                room.roomPic !== ''
+                  ? { uri: room.roomPic }
+                  : require('../assets/sample-avatar.png')
+              }
+              style={tailwind('h-16 w-16 rounded-full')}
+            />
+            <View style={tailwind('flex justify-center ml-4')}>
+              <Text
+                style={[
+                  tailwind('text-base'),
+                  { fontFamily: 'Poppins-Medium' },
+                ]}
+              >
+                {room.name.length > 32
+                  ? `${room.name.substring(0, 32)}...`
+                  : room.name}
+              </Text>
+              <Text
+                style={[
+                  tailwind('text-base'),
+
+                  { fontFamily: 'SFCompactText-Regular' },
+                ]}
+              >
+                {temporaryMessage.length > 35
+                  ? `${temporaryMessage.substring(0, 35)}...`
+                  : temporaryMessage}
+              </Text>
+            </View>
             <Text
               style={[
-                tailwind('text-base'),
-                room.lastMessage.read
-                  ? tailwind('text-black')
-                  : tailwind('text-white'),
-                { fontFamily: 'Poppins-Medium' },
+                tailwind('absolute right-4 top-2 text-grey-normal text-xs'),
+                { fontFamily: 'Poppins-Regular' },
               ]}
             >
-              {room.name}
-            </Text>
-            <Text
-              style={[
-                tailwind('text-base'),
-                room.lastMessage.read
-                  ? tailwind('text-black')
-                  : tailwind('text-white'),
-                { fontFamily: 'SFCompactText-Regular' },
-              ]}
-            >
-              {room.lastMessage.message.length > 35
-                ? `${room.lastMessage.message.substring(0, 35)}...`
-                : room.lastMessage.message}
+              {temporaryTime}
             </Text>
           </View>
-          <Text
-            style={[
-              tailwind('absolute right-4 top-2 text-grey-normal text-xs'),
-              { fontFamily: 'Poppins-Regular' },
-            ]}
-          >
-            {room.lastMessage.timeAgo}
-          </Text>
-        </View>
-      ))}
+        ),
+      )}
     </View>
   ) : (
     <View style={tailwind('mt-4 self-center')}>
