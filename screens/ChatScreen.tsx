@@ -115,6 +115,19 @@ const MESSAGES_SUBSCRIPTION = gql`
   }
 `;
 
+const TYPING_USER = gql`
+  subscription typingUser($roomId: String!) {
+    typingUser(roomId: $roomId) {
+      email
+      firstName
+      id
+      lastName
+      profilePic
+      role
+    }
+  }
+`;
+
 const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
   // FETCH MESSAGES
 
@@ -179,6 +192,13 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
     }
   }, [dataSub, refetch]);
 
+  // TYPING USER
+  // Temporarily disabled, read comment on <GiftedChat />
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: dataTyping } = useSubscription(TYPING_USER, {
+    variables: { roomId: route.params.selectedRoomId },
+  });
+
   // HEADER CONFIG
 
   useEffect(
@@ -237,6 +257,8 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
       user={{
         _id: data.user.id,
       }}
+      // Temporarily disabled, as I currently have no way of checking if that's the correct implementation
+      // isTyping={dataTyping}
     />
   ) : (
     <View style={tailwind('mt-4 self-center')}>
