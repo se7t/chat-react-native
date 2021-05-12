@@ -1,21 +1,14 @@
 /* eslint-disable global-require */
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
 import RoomsScreen from './screens/RoomsScreen';
 import ChatScreen from './screens/ChatScreen';
 import { RootStackParamList } from './navigation';
-
-const client = new ApolloClient({
-  uri: process.env.REACT_NATIVE_CHAT_URL,
-  headers: {
-    Authorization: `Bearer ${process.env.REACT_NATIVE_CHAT_AUTH_TOKEN}`,
-  },
-  cache: new InMemoryCache(),
-});
+import createClient from './utils/apolloClient';
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -37,8 +30,10 @@ const App: React.FC = () => {
     loadFonts();
   }, []);
 
+  const client = useRef(createClient());
+
   return fontsLoaded ? (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={client.current}>
       <NavigationContainer>
         <StatusBar />
         <RootStack.Navigator initialRouteName="Rooms">
