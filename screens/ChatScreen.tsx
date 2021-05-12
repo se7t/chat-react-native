@@ -257,6 +257,7 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
       user={{
         _id: data.user.id,
       }}
+      inverted={false}
       // Temporarily disabled, as I currently have no way of checking if that's the correct implementation
       // isTyping={dataTyping}
     />
