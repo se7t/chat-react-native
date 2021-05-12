@@ -6,9 +6,10 @@ import { gql, useQuery } from '@apollo/client';
 import { tailwind } from '../utils/tailwind';
 import SearchIcon from '../assets/search.svg';
 import RoomsIcon from '../assets/rooms.svg';
-import { RoomsScreenNavigationProp } from '../navigation';
+import { RoomsScreenNavigationProp, RoomsScreenRouteProp } from '../navigation';
 
 type NavigationProps = {
+  route: RoomsScreenRouteProp;
   navigation: RoomsScreenNavigationProp;
 };
 
@@ -74,7 +75,9 @@ const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
             // eslint-disable-next-line react/no-array-index-key
             key={room.name.replace(/\s/g, '').toLowerCase() + index}
             style={[tailwind('flex flex-row p-4 rounded-xl my-2 bg-white')]}
-            onTouchEnd={() => navigation.navigate('Chat')}
+            onTouchEnd={() => {
+              navigation.navigate('Chat', { selectedRoomId: room.id });
+            }}
           >
             <Image
               source={

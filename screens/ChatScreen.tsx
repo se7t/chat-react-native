@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
 import { Image, View, Text } from 'react-native';
@@ -6,10 +7,11 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { tailwind } from '../utils/tailwind';
 import PhoneIcon from '../assets/phone.svg';
 import VideoCallIcon from '../assets/videocall.svg';
-import { ChatScreenNavigationProp } from '../navigation';
+import { ChatScreenNavigationProp, ChatScreenRouteProp } from '../navigation';
 
 type NavigationProps = {
   navigation: ChatScreenNavigationProp;
+  route: ChatScreenRouteProp;
 };
 
 interface MessagesData {
@@ -38,8 +40,8 @@ interface MessagesData {
 }
 
 const TWG_ROOM_MESSAGES = gql`
-  query GetMessages {
-    room(id: "f47e2a23-5257-4c25-a734-881d10045f5e") {
+  query GetMessages($roomId: String) {
+    room(id: $roomId) {
       id
       messages {
         body
@@ -63,8 +65,14 @@ const TWG_ROOM_MESSAGES = gql`
   }
 `;
 
-const ChatScreen: React.FC<NavigationProps> = ({ navigation }) => {
-  const { loading, error, data } = useQuery<MessagesData>(TWG_ROOM_MESSAGES);
+const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
+  const { loading, error, data } = useQuery<MessagesData>(TWG_ROOM_MESSAGES, {
+    variables: {
+      roomId: route.params.selectedRoomId,
+    },
+  });
+
+  if (!loading) console.log(data);
 
   const [messages, setMessages] = useState([]);
 
@@ -89,6 +97,12 @@ const ChatScreen: React.FC<NavigationProps> = ({ navigation }) => {
       setMessages(parsedMessages);
     }
   }, [data, loading]);
+
+  // const onSend = useCallback(messages => {
+  //   setMessages(previousMessages =>
+  //     GiftedChat.append(previousMessages, messages),
+  //   );
+  // }, []);
 
   const onSend = () => console.log('Test sent');
 
@@ -144,6 +158,7 @@ const ChatScreen: React.FC<NavigationProps> = ({ navigation }) => {
   return data ? (
     <GiftedChat
       messages={messages}
+      // onSend={messages => onSend(messages)}
       onSend={onSend}
       user={{
         _id: data.user.id,
