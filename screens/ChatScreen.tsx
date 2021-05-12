@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 import React, { useEffect } from 'react';
 import { Button, Image, View, Text } from 'react-native';
-import { tailwind } from '../lib/tailwind';
+import { tailwind } from '../utils/tailwind';
 import PhoneIcon from '../assets/phone.svg';
 import VideoCallIcon from '../assets/videocall.svg';
 import { ChatScreenNavigationProp } from '../navigation';

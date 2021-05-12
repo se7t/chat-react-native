@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable global-require */
 import React, { useEffect } from 'react';
 import { Image, View, Text } from 'react-native';
 import { gql, useQuery } from '@apollo/client';
-import { tailwind } from '../lib/tailwind';
+import { tailwind } from '../utils/tailwind';
 import SearchIcon from '../assets/search.svg';
 import RoomsIcon from '../assets/rooms.svg';
 import { RoomsScreenNavigationProp } from '../navigation';
