@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable global-require */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Image, View, Text } from 'react-native';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { tailwind } from '../utils/tailwind';
 import PhoneIcon from '../assets/phone.svg';
@@ -65,14 +64,32 @@ const TWG_ROOM_MESSAGES = gql`
   }
 `;
 
+const ADD_NEW_MESSAGE = gql`
+  mutation sendMessage($body: String!, $roomId: String!) {
+    sendMessage(body: $body, roomId: $roomId) {
+      body
+      id
+      insertedAt
+      user {
+        email
+        firstName
+        id
+        lastName
+        profilePic
+        role
+      }
+    }
+  }
+`;
+
 const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
+  // FETCH MESSAGES
+
   const { loading, error, data } = useQuery<MessagesData>(TWG_ROOM_MESSAGES, {
     variables: {
       roomId: route.params.selectedRoomId,
     },
   });
-
-  if (!loading) console.log(data);
 
   const [messages, setMessages] = useState([]);
 
@@ -98,13 +115,25 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
     }
   }, [data, loading]);
 
-  // const onSend = useCallback(messages => {
-  //   setMessages(previousMessages =>
-  //     GiftedChat.append(previousMessages, messages),
-  //   );
-  // }, []);
+  // SEND MESSAGES
 
-  const onSend = () => console.log('Test sent');
+  const [sendMessage] = useMutation(ADD_NEW_MESSAGE);
+
+  const onSend = useCallback(
+    (newMessages = []) => {
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, newMessages),
+      );
+
+      sendMessage({
+        variables: {
+          body: newMessages[0].text,
+          roomId: route.params.selectedRoomId,
+        },
+      });
+    },
+    [route.params.selectedRoomId, sendMessage],
+  );
 
   useEffect(
     () =>
@@ -158,8 +187,7 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
   return data ? (
     <GiftedChat
       messages={messages}
-      // onSend={messages => onSend(messages)}
-      onSend={onSend}
+      onSend={newMessages => onSend(newMessages)}
       user={{
         _id: data.user.id,
       }}
