@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Image, View, Text } from 'react-native';
-import { gql, useQuery, useMutation } from '@apollo/client';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { gql, useQuery, useMutation, useSubscription } from '@apollo/client';
+import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { tailwind } from '../utils/tailwind';
 import PhoneIcon from '../assets/phone.svg';
 import VideoCallIcon from '../assets/videocall.svg';
@@ -13,6 +13,20 @@ type NavigationProps = {
   route: ChatScreenRouteProp;
 };
 
+interface ApiMessage {
+  body: string;
+  id: string;
+  insertedAt: string;
+  user: {
+    email: string;
+    firstName: string;
+    id: string;
+    lastName: string;
+    profilePic: string;
+    role: string;
+  };
+}
+
 interface MessagesData {
   room: {
     id: string;
@@ -20,6 +34,7 @@ interface MessagesData {
       body: string;
       id: string;
       insertedAt: string;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       map?: any;
       user: {
         email: string;
@@ -38,7 +53,7 @@ interface MessagesData {
   };
 }
 
-const TWG_ROOM_MESSAGES = gql`
+const GET_MESSAGES = gql`
   query GetMessages($roomId: String) {
     room(id: $roomId) {
       id
@@ -64,9 +79,27 @@ const TWG_ROOM_MESSAGES = gql`
   }
 `;
 
-const ADD_NEW_MESSAGE = gql`
+const SEND_MESSAGE = gql`
   mutation sendMessage($body: String!, $roomId: String!) {
     sendMessage(body: $body, roomId: $roomId) {
+      body
+      id
+      insertedAt
+      user {
+        email
+        firstName
+        id
+        lastName
+        profilePic
+        role
+      }
+    }
+  }
+`;
+
+const MESSAGES_SUBSCRIPTION = gql`
+  subscription messageAdded($roomId: String!) {
+    messageAdded(roomId: $roomId) {
       body
       id
       insertedAt
@@ -85,15 +118,18 @@ const ADD_NEW_MESSAGE = gql`
 const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
   // FETCH MESSAGES
 
-  const { loading, error, data } = useQuery<MessagesData>(TWG_ROOM_MESSAGES, {
-    variables: {
-      roomId: route.params.selectedRoomId,
+  const { loading, error, data, refetch } = useQuery<MessagesData>(
+    GET_MESSAGES,
+    {
+      variables: {
+        roomId: route.params.selectedRoomId,
+      },
     },
-  });
+  );
 
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<IMessage[]>();
 
-  const parseMessage = (message: any) => {
+  const parseMessage = (message: ApiMessage) => {
     return {
       _id: message.id,
       text: message.body,
@@ -108,7 +144,7 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
 
   useEffect(() => {
     if (!loading && data) {
-      const parsedMessages = data.room.messages.map((message: any) =>
+      const parsedMessages = data.room.messages.map((message: ApiMessage) =>
         parseMessage(message),
       );
       setMessages(parsedMessages);
@@ -117,14 +153,10 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
 
   // SEND MESSAGES
 
-  const [sendMessage] = useMutation(ADD_NEW_MESSAGE);
+  const [sendMessage] = useMutation(SEND_MESSAGE);
 
   const onSend = useCallback(
     (newMessages = []) => {
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, newMessages),
-      );
-
       sendMessage({
         variables: {
           body: newMessages[0].text,
@@ -134,6 +166,20 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
     },
     [route.params.selectedRoomId, sendMessage],
   );
+
+  // SUBSCRIBE TO MESSAGES
+
+  const { data: dataSub } = useSubscription(MESSAGES_SUBSCRIPTION, {
+    variables: { roomId: route.params.selectedRoomId },
+  });
+
+  useEffect(() => {
+    if (dataSub) {
+      refetch();
+    }
+  }, [dataSub, refetch]);
+
+  // HEADER CONFIG
 
   useEffect(
     () =>
