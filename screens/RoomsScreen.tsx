@@ -72,7 +72,7 @@ const RoomsScreen: React.FC<NavigationProps> = ({ navigation }) => {
             // Index is appended in case of more rooms with the same name
             // eslint-disable-next-line react/no-array-index-key
             key={room.name.replace(/\s/g, '').toLowerCase() + index}
-            style={[tailwind('flex flex-row p-4 rounded-xl my-2')]}
+            style={[tailwind('flex flex-row p-4 rounded-xl my-2 bg-white')]}
             onTouchEnd={() => navigation.navigate('Chat')}
           >
             <Image
