@@ -1,11 +1,21 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable global-require */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Image, View, Text } from 'react-native';
 import { gql, useQuery, useMutation, useSubscription } from '@apollo/client';
-import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import {
+  Bubble,
+  Composer,
+  GiftedChat,
+  IMessage,
+  InputToolbar,
+  MessageText,
+  Send,
+} from 'react-native-gifted-chat';
 import { tailwind } from '../utils/tailwind';
 import PhoneIcon from '../assets/phone.svg';
 import VideoCallIcon from '../assets/videocall.svg';
+import SendIcon from '../assets/send.svg';
 import { ChatScreenNavigationProp, ChatScreenRouteProp } from '../navigation';
 
 type NavigationProps = {
@@ -246,6 +256,7 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
             <VideoCallIcon style={tailwind('ml-2 mr-4')} />
           </View>
         ),
+        cardStyle: tailwind('bg-blue-tint-2'),
       }),
     [data, navigation],
   );
@@ -257,6 +268,70 @@ const ChatScreen: React.FC<NavigationProps> = ({ route, navigation }) => {
       user={{
         _id: data.user.id,
       }}
+      placeholder=""
+      alwaysShowSend
+      renderBubble={props => (
+        <Bubble
+          {...props}
+          // renderTime={() => <Text>Time</Text>}
+          // renderTicks={() => <Text>Ticks</Text>}
+          renderTime={() => <></>}
+          wrapperStyle={{
+            left: tailwind('bg-white py-2 px-1 rounded-2xl rounded-bl-none'),
+            right: tailwind(
+              'bg-plum-tint-1 py-1 px-1 text-white rounded-2xl rounded-br-none',
+            ),
+          }}
+          containerStyle={{
+            left: tailwind('mx-1'),
+            right: tailwind('mx-2'),
+          }}
+        />
+      )}
+      renderMessageText={props => (
+        <MessageText
+          textStyle={{
+            left: [
+              tailwind('text-base text-black'),
+              { fontFamily: 'SFCompactText-Regular' },
+            ],
+            right: [
+              tailwind('text-base text-white'),
+              { fontFamily: 'SFCompactText-Regular' },
+            ],
+          }}
+          {...props}
+        />
+      )}
+      renderInputToolbar={props => (
+        <InputToolbar
+          {...props}
+          containerStyle={tailwind(
+            'h-16 rounded-t-2xl bg-blue-tint-1 pl-1 pt-2 pb-3',
+          )}
+        />
+      )}
+      renderComposer={props => (
+        <Composer
+          {...props}
+          textInputStyle={tailwind(
+            'rounded-xl bg-white mb-4 px-4 py-2 rounded-br-none',
+          )}
+        />
+      )}
+      renderSend={props => (
+        <Send {...props} containerStyle={tailwind('mb-3 ml-2 mr-3 mt-1')}>
+          <SendIcon />
+        </Send>
+      )}
+      // renderChatFooter={() => (
+      //   <View style={tailwind('h-8 bg-transparent pt-8')} />
+      // )}
+      loadEarlier
+      infiniteScroll
+      // BottomOffset does not appear to work, that's a workaround
+      renderFooter={() => <View style={tailwind('h-8')} />}
+      scrollToBottom
       inverted={false}
       // Temporarily disabled, as I currently have no way of checking if that's the correct implementation
       // isTyping={dataTyping}
